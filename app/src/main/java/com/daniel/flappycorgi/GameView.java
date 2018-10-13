@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.daniel.flappycorgi.sprites.CharacterSprite;
+import com.daniel.flappycorgi.sprites.EnemySprite;
 import com.daniel.flappycorgi.sprites.Sprite;
 
 import java.util.ArrayList;
@@ -31,8 +32,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         CharacterSprite characterSprite = new CharacterSprite(
                 BitmapFactory.decodeResource(getResources(), R.drawable.corgi),
+                350);
+        EnemySprite enemySprite = new EnemySprite(
+                BitmapFactory.decodeResource(getResources(), R.drawable.cat),
                 300);
+
         sprites.add(characterSprite);
+        sprites.add(enemySprite);
 
         thread.setRunning(true);
         thread.start();

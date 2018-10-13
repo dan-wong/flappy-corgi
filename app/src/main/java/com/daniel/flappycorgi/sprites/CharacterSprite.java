@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import com.daniel.flappycorgi.util.BitmapUtil;
 import com.daniel.flappycorgi.util.PhysicsEngineUtil;
 
 public class CharacterSprite extends Sprite {
@@ -18,9 +19,7 @@ public class CharacterSprite extends Sprite {
 
     public CharacterSprite(Bitmap bmp, int desiredWidth) {
         super();
-
-        int newHeight = (int) (bmp.getHeight() / (double) bmp.getWidth() * desiredWidth);
-        this.image = Bitmap.createScaledBitmap(bmp, desiredWidth, newHeight, false);
+        this.image = BitmapUtil.resizeBitmap(bmp, desiredWidth);
 
         spriteData.x = screenWidth / 2 - this.image.getWidth() / 2;
     }
@@ -34,7 +33,7 @@ public class CharacterSprite extends Sprite {
     public void update() {
         if (!gameOver) {
             if (upwardForce) {
-                PhysicsEngineUtil.calculateNewPosition(this.spriteData, -13);
+                PhysicsEngineUtil.calculateNewPosition(this.spriteData, 0, -13);
                 upwardForceCounter++;
 
                 if (upwardForceCounter == 3) {
@@ -42,7 +41,7 @@ public class CharacterSprite extends Sprite {
                     upwardForceCounter = 0;
                 }
             } else {
-                PhysicsEngineUtil.calculateNewPosition(this.spriteData, PhysicsEngineUtil.GRAVITY);
+                PhysicsEngineUtil.calculateNewPosition(this.spriteData, 0, PhysicsEngineUtil.GRAVITY);
             }
         }
 
