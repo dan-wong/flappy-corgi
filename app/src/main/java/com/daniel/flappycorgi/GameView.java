@@ -9,28 +9,30 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.daniel.flappycorgi.sprites.CharacterSprite;
-import com.daniel.flappycorgi.sprites.GameOverSprite;
+import com.daniel.flappycorgi.sprites.Sprite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
-
-    private CharacterSprite characterSprite;
-    private GameOverSprite gameOverSprite;
+    private List<Sprite> sprites;
 
     public GameView(Context context) {
         super(context);
         getHolder().addCallback(this);
+        setFocusable(true);
 
         thread = new MainThread(getHolder(), this);
-        setFocusable(true);
+        sprites = new ArrayList<>();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        characterSprite = new CharacterSprite(
+        CharacterSprite characterSprite = new CharacterSprite(
                 BitmapFactory.decodeResource(getResources(), R.drawable.corgi),
-                400);
-        gameOverSprite = new GameOverSprite(this);
+                300);
+        sprites.add(characterSprite);
 
         thread.setRunning(true);
         thread.start();
@@ -42,7 +44,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        characterSprite.manageTouch();
+        sprites.forEach(Sprite::manageTouch);
         return super.onTouchEvent(event);
     }
 
@@ -65,17 +67,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         if (canvas != null) {
             canvas.drawColor(Color.WHITE);
-            characterSprite.draw(canvas);
-            gameOverSprite.draw(canvas);
+            sprites.forEach(sprite -> sprite.draw(canvas));
         }
     }
 
     public void update() {
-        boolean gameOver = characterSprite.update();
-        if (gameOver) {
-            gameOverSprite.setOpacity(255);
-        } else {
-            gameOverSprite.setOpacity(0);
-        }
+        sprites.forEach(Sprite::update);
     }
 }
