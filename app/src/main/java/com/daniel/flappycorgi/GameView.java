@@ -41,8 +41,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 BitmapFactory.decodeResource(getResources(), R.drawable.cat),
                 300);
 
+        EnemySprite enemySprite2 = new EnemySprite(
+                BitmapFactory.decodeResource(getResources(), R.drawable.cat),
+                300);
+
         sprites.add(this.characterSprite);
         sprites.add(enemySprite);
+        sprites.add(enemySprite2);
 
         thread.setRunning(true);
         thread.start();
@@ -95,9 +100,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         if (!gameOver) {
             sprites.forEach(Sprite::update);
-            gameOver = sprites.stream().anyMatch(sprite -> !sprite.equals(characterSprite)
+            gameOver = sprites.parallelStream().anyMatch(sprite -> !sprite.equals(characterSprite)
                     && CollisionDetectionUtil.detectCollision(characterSprite, sprite)) ||
-                    sprites.stream().anyMatch(Sprite::isGameOver);
+                    sprites.parallelStream().anyMatch(Sprite::isGameOver);
         }
     }
 }

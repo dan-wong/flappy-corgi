@@ -17,8 +17,8 @@ public class EnemySprite extends Sprite {
         super();
         this.image = BitmapUtil.resizeBitmap(bmp, desiredWidth);
 
-        spriteData.y = screenHeight / 2 - this.image.getHeight() / 2;
         spriteData.xVelocity = -10;
+        reset();
     }
 
     @Override
