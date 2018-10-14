@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import com.daniel.flappycorgi.sprites.CharacterSprite;
 import com.daniel.flappycorgi.sprites.EnemySprite;
 import com.daniel.flappycorgi.sprites.Sprite;
+import com.daniel.flappycorgi.util.CollisionDetectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,9 @@ import java.util.List;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private List<Sprite> sprites;
+    private CharacterSprite characterSprite;
+
+    private boolean gameOver = false;
 
     public GameView(Context context) {
         super(context);
@@ -30,14 +34,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        CharacterSprite characterSprite = new CharacterSprite(
+        this.characterSprite = new CharacterSprite(
                 BitmapFactory.decodeResource(getResources(), R.drawable.corgi),
                 350);
         EnemySprite enemySprite = new EnemySprite(
                 BitmapFactory.decodeResource(getResources(), R.drawable.cat),
                 300);
 
-        sprites.add(characterSprite);
+        sprites.add(this.characterSprite);
         sprites.add(enemySprite);
 
         thread.setRunning(true);
@@ -50,8 +54,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        sprites.forEach(Sprite::manageTouch);
+        performClick(); //Something about accessibility requiring the performClick method to be called
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performClick() {
+        if (gameOver) {
+            gameOver = false;
+            sprites.forEach(Sprite::reset);
+        }
+        sprites.forEach(Sprite::manageTouch);
+
+        return super.performClick();
     }
 
     @Override
@@ -78,6 +93,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        sprites.forEach(Sprite::update);
+        if (!gameOver) {
+            sprites.forEach(Sprite::update);
+            gameOver = sprites.stream().anyMatch(sprite -> !sprite.equals(characterSprite)
+                    && CollisionDetectionUtil.detectCollision(characterSprite, sprite)) ||
+                    sprites.stream().anyMatch(Sprite::isGameOver);
+        }
     }
 }

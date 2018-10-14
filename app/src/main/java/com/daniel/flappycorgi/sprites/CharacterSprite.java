@@ -11,8 +11,6 @@ public class CharacterSprite extends Sprite {
     private static final int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private static final int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
 
-    private final Bitmap image;
-
     private boolean gameOver = false;
     private boolean upwardForce = false;
     private int upwardForceCounter = 0;
@@ -21,7 +19,7 @@ public class CharacterSprite extends Sprite {
         super();
         this.image = BitmapUtil.resizeBitmap(bmp, desiredWidth);
 
-        spriteData.x = screenWidth / 2 - this.image.getWidth() / 2;
+        spriteData.x = screenWidth / 3 - this.image.getWidth() / 2;
     }
 
     @Override
@@ -44,9 +42,7 @@ public class CharacterSprite extends Sprite {
                 PhysicsEngineUtil.calculateNewPosition(this.spriteData, 0, PhysicsEngineUtil.GRAVITY);
             }
         }
-
         if (spriteData.y > screenHeight - image.getHeight()) {
-            gameOver = true;
             spriteData.y = screenHeight - image.getHeight();
         } else if (spriteData.y < 0) {
             spriteData.yVelocity = 5;
@@ -55,13 +51,16 @@ public class CharacterSprite extends Sprite {
 
     @Override
     public void manageTouch() {
-        if (gameOver) {
-            spriteData.y = 0;
-            spriteData.yVelocity = 0;
+        upwardForce = true;
+    }
 
-            gameOver = false;
-        } else { //Otherwise it is an upward touch
-            upwardForce = true;
-        }
+    @Override
+    public void reset() {
+        spriteData.y = 0;
+    }
+
+    @Override
+    public boolean isGameOver() {
+        return spriteData.y == screenHeight - image.getHeight();
     }
 }

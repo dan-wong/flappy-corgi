@@ -7,7 +7,7 @@ public class MainThread extends Thread {
     private static final int TARGET_FPS = 60;
     private static Canvas canvas;
 
-    private SurfaceHolder surfaceHolder;
+    private final SurfaceHolder surfaceHolder;
     private GameView gameView;
     private boolean running;
 
